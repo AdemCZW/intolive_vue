@@ -21,7 +21,7 @@ const httpLink = createHttpLink({
 
 // 创建 WebSocket 链接
 const wsLink = new WebSocketLink({
-  uri: "ws://127.0.0.1:8000/ws/ingredients/",
+  uri: "wss://intolive-production.up.railway.app/ws/ingredients/",
   options: {
     reconnect: true,
   },
