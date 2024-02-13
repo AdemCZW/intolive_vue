@@ -16,7 +16,7 @@ const cache = new InMemoryCache();
 
 // 创建 HTTP 链接
 const httpLink = createHttpLink({
-  uri: "http://127.0.0.1:8000/graphql",
+  uri: "https://intolive-production.up.railway.app/graphql",
 });
 
 // 创建 WebSocket 链接
