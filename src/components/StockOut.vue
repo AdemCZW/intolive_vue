@@ -32,7 +32,6 @@
                     </transition-group>
                 </div>
             </div>
-
             <div class="col-md-6">
                 <h4>選擇上架的物件跟數量</h4>
                 <!-- Form -->
@@ -65,12 +64,9 @@
             </div>
         </div>
     </div>
+    
 </template>
 <style scoped>
-.container {
-
-}
-
 .card {
         background-color: #444;
         border-color: #666;
@@ -148,8 +144,12 @@
 import { ref, computed, reactive, watchEffect, watch, onMounted } from 'vue'
 import { useQuery, useMutation } from '@vue/apollo-composable'
 import { gql } from 'graphql-tag'
+import Bar from './Bar.vue'
 
-const { result: ingredientsResult, loading: ingredientsLoading, error: ingredientsError, refetch: refetchIngredients } = useQuery(
+
+const emit = defineEmits(['update'])
+
+const { result: ingredientsResult, refetch: refetchIngredients } = useQuery(
     gql`
         query {
             allIngredients {
@@ -216,18 +216,20 @@ onMounted(() => {
         updateTabBorders();
     })
 
-    // 初始設定邊框
-    updateTabBorders();
-});
+        // 初始設定邊框
+        updateTabBorders();
+    });
 
     const adjustedIngredients = computed(() => {
-    if (!ingredientsResult.value || !intoStocksResult.value) {
-        return []
-    }
+        if (!ingredientsResult.value || !intoStocksResult.value) {
+            return []
+        }
+
+    
 
     // 先創建一個對象，將相同類型的成分相加
     const ingredientsMap = ingredientsResult.value.allIngredients.reduce((acc, ingredient) => {
-        const key = `${ingredient.name}-${ingredient.size}-${ingredient.color}`
+    const key = `${ingredient.name}-${ingredient.size}-${ingredient.color}`
 
         if (acc[key]) {
             acc[key].quantity += ingredient.quantity
@@ -289,12 +291,13 @@ onMounted(() => {
 })
 
 
+
 const form = reactive({
-  name: '',
-  notes: '',
-  size: '',
-  quantity: 1,
-  color: ''
+    name: '',
+    notes: '',
+    size: '',
+    quantity: 1,
+    color: ''
 })
 
 const { mutate: intoStock } = useMutation(ADD_INTO_STOCK_MUTATION)
@@ -327,6 +330,11 @@ const groupedIngredients = computed(() => {
     }, {});
 });
 
+watch(groupedIngredients, (newVal) => {
+    // 触发 update 事件
+    emit('update', { groupedIngredients: newVal })
+})
+
 watch(() => form.name, async (newName) => {
     // 在這裡，你可以根據新的 `name` 來更新你的表格數據
     // 例如，你可能需要重新獲取與 `newName` 相關的成分或庫存數據
@@ -336,28 +344,28 @@ watch(() => form.name, async (newName) => {
 
 const sizes = ['S', 'M', 'L', 'XL', 'XXL', 'XXXL']
 const colors = [
-  { value: 'BLK', label: 'Black' },
-  { value: 'CRM', label: 'Cream' },
-  { value: 'OAT', label: 'Oatmeal' },
-  { value: 'CML', label: 'Camel' },
-  { value: 'BRN', label: 'Brown' }
+    { value: 'BLK', label: 'Black' },
+    { value: 'CRM', label: 'Cream' },
+    { value: 'OAT', label: 'Oatmeal' },
+    { value: 'CML', label: 'Camel' },
+    { value: 'BRN', label: 'Brown' }
 ]
 
 const getColorClass = (color) => {
-  switch (color) {
-    case 'BLK':
-      return 'bg-dark text-white'
-    case 'CRM':
-      return 'bg-crm text-black'
-    case 'OAT':
-      return 'bg-oat text-black'
-    case 'CML':
-      return 'bg-cml text-white'
-    case 'BRN':
-      return 'bg-brn text-white'
-    default:
-      return ''
-  }
+    switch (color) {
+        case 'BLK':
+        return 'bg-dark text-white'
+        case 'CRM':
+        return 'bg-crm text-black'
+        case 'OAT':
+        return 'bg-oat text-black'
+        case 'CML':
+        return 'bg-cml text-white'
+        case 'BRN':
+        return 'bg-brn text-white'
+        default:
+        return ''
+    }
 }
 
 let currentTab = ref(null)
@@ -367,5 +375,6 @@ watchEffect(() => {
         currentTab.value = Object.keys(groupedIngredients.value)[0]
     }
 })
+
 
 </script>

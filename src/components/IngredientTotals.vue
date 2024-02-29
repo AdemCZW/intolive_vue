@@ -5,7 +5,6 @@
 import { useQuery } from '@vue/apollo-composable'
 import { computed, ref, watchEffect } from 'vue'
 import gql from 'graphql-tag'
-import StockOut from './StockOut.vue'
 
 const ALL_INGREDIENTS_QUERY = gql`
   query {
@@ -23,7 +22,7 @@ const ALL_INGREDIENTS_QUERY = gql`
   }
 ` 
 
-const { data, onResult, loading, error, refetch } = useQuery(ALL_INGREDIENTS_QUERY)
+const { data, onResult, refetch } = useQuery(ALL_INGREDIENTS_QUERY)
 const ingredients = ref([])
 const totalLast24Hours = ref(0)
 const inputQuantity = ref({})

@@ -1,4 +1,5 @@
 import App from "./App.vue";
+import "./assets/css/tailwind.css";
 import { createApp, h, provide, render } from "vue";
 import { DefaultApolloClient } from "@vue/apollo-composable";
 import { createApolloProvider } from "@vue/apollo-option";
